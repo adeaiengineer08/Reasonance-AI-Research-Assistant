@@ -4,9 +4,11 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 > **Convention used here**: each prompt is in a fenced blockquote. Paste verbatim into Cursor Composer (Cmd-I). When something is parameterised (`{like_this}`), substitute before sending.
 
+> **Session mapping**: Session 3 = LangGraph concepts (Day 3 H1, H2a). Session 4 = build nodes + UI (Day 3 H2b-H2d, H3, H4). Session 5 = guardrails + golden set (Day 4 H1, H2a). Session 6 = eval suite + deploy (Day 4 H2b-H2d, H4). Prompt IDs like `Day 3 H2c` are stable references.
+
 ---
 
-## Day 3 H1 - Tiny graph demo (concept anchor)
+## Day 3 H1 - Tiny graph demo (Session 3)
 
 > In `app/playground/tiny_graph.py`, write a 15-line LangGraph demo:
 >
@@ -19,7 +21,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 3 H2a - ResearchState + build_graph stub
+## Day 3 H2a - ResearchState + build_graph stub (Session 3)
 
 > Create `app/graph.py`:
 >
@@ -38,7 +40,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 3 H2b - Planner node
+## Day 3 H2b - Planner node (Session 4)
 
 > Create `app/nodes/planner.py` exporting `planner_node(state: ResearchState) -> dict`.
 >
@@ -50,7 +52,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 3 H2c - Researcher node
+## Day 3 H2c - Researcher node (Session 4)
 
 > Create `app/nodes/researcher.py` exporting `researcher_node(state: ResearchState) -> dict`.
 >
@@ -66,7 +68,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 3 H2d - Writer node
+## Day 3 H2d - Writer node (Session 4)
 
 > Create `app/nodes/writer.py` exporting `writer_node(state: ResearchState) -> dict`.
 >
@@ -78,7 +80,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 3 H3 - Streaming helper
+## Day 3 H3 - Streaming helper (Session 4)
 
 > In `app/graph.py`, add an async helper:
 >
@@ -97,7 +99,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 3 H4 - FastAPI + HTMX UI
+## Day 3 H4 - FastAPI + HTMX UI (Session 4)
 
 > Create three files:
 >
@@ -119,7 +121,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 4 H1 - Citation guardrail
+## Day 4 H1 - Citation guardrail (Session 5)
 
 > Create `app/guardrails.py`:
 >
@@ -130,7 +132,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 4 H2a - Golden dataset
+## Day 4 H2a - Golden dataset (Session 5)
 
 > Create `evals/golden.jsonl` with about 15 realistic research questions. Each row is a JSON object with keys:
 >
@@ -142,7 +144,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 4 H2b - Planner eval
+## Day 4 H2b - Planner eval (Session 6)
 
 > Write `evals/planner_eval.py`:
 >
@@ -153,7 +155,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 4 H2c - Citation eval
+## Day 4 H2c - Citation eval (Session 6)
 
 > Write `evals/citation_eval.py`:
 >
@@ -163,7 +165,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 4 H2d - End-to-end eval
+## Day 4 H2d - End-to-end eval (Session 6)
 
 > Write `evals/e2e_eval.py`:
 >
@@ -173,7 +175,7 @@ Every Cursor Composer prompt for Project 1, in the order they're issued in class
 
 ---
 
-## Day 4 H4 - Cloud Run deploy script
+## Day 4 H4 - Cloud Run deploy script (Session 6)
 
 > Create `scripts/deploy_cloudrun.sh`:
 >

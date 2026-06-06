@@ -2,9 +2,11 @@
 
 Every Cursor Composer prompt for Project 2, in the order they're issued in class.
 
+> **Session mapping**: Session 7 = Day 5 (memory + P2 skeleton). Session 8 = Day 6 H1 (Triager). Session 9 = Day 6 H2-H4 (Investigator, Responder, HITL). Session 10 = Day 7 (deploys). Session 11 = Day 8 H1-H2 (evals, security). Session 12 = Day 8 H3 (billing + demo). Prompt IDs like `Day 6 H1` are stable references.
+
 ---
 
-## Day 5 H2 - Memory upgrade on Project 1
+## Day 5 H2 - Memory upgrade on Project 1 (Session 7)
 
 (This prompt is technically for Project 1's repo, but it's where we teach memory.)
 
@@ -19,7 +21,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 
 ---
 
-## Day 5 H4 - Project 2 skeleton
+## Day 5 H4 - Project 2 skeleton (Session 7)
 
 > Initialize a new project `monk-ticket-triage`. Create the following structure with stub implementations:
 >
@@ -51,7 +53,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 
 ---
 
-## Day 6 H1 - Real Triager
+## Day 6 H1 - Real Triager (Session 8)
 
 > Replace the stub in `app/agents/triager.py`:
 >
@@ -66,7 +68,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 
 ---
 
-## Day 6 H2 - The Investigator and its tools
+## Day 6 H2 - The Investigator and its tools (Session 9)
 
 **First the tools**:
 
@@ -93,7 +95,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 
 ---
 
-## Day 6 H3 - The Responder and the memory layers
+## Day 6 H3 - The Responder and the memory layers (Session 9)
 
 **Memory first**:
 
@@ -119,7 +121,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 
 ---
 
-## Day 6 H4 - Human-in-the-loop
+## Day 6 H4 - Human-in-the-loop (Session 9)
 
 > Create `app/hitl.py`:
 >
@@ -149,7 +151,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 
 ---
 
-## Day 7 H2 - AgentCore deploy
+## Day 7 H2 - AgentCore deploy (Session 10)
 
 > Create `deploy/agentcore_entrypoint.py`:
 >
@@ -192,7 +194,7 @@ And refactor `app/graph.py` to export `build_graph_with_backends(saver, store)` 
 
 ---
 
-## Day 7 H4 - Vertex Agent Engine deploy
+## Day 7 H4 - Vertex Agent Engine deploy (Session 10)
 
 > Create `deploy/vertex_engine_deploy.py`:
 >
@@ -232,7 +234,7 @@ And refactor `app/graph.py` to export `build_graph_with_backends(saver, store)` 
 
 ---
 
-## Day 8 H1 - Eval suite
+## Day 8 H1 - Eval suite (Session 11)
 
 > Create four eval scripts under `evals/`:
 >
@@ -248,7 +250,7 @@ And refactor `app/graph.py` to export `build_graph_with_backends(saver, store)` 
 
 ---
 
-## Day 8 H2 - Security injection eval
+## Day 8 H2 - Security injection eval (Session 11)
 
 > Create `security/attacks.jsonl` with 20 attack payloads as ticket bodies, each labelled `name` and `expected_outcome` (either `blocked` or `escalated`).
 >
@@ -260,7 +262,7 @@ And refactor `app/graph.py` to export `build_graph_with_backends(saver, store)` 
 
 ---
 
-## Day 8 H3 - Billing alerts
+## Day 8 H3 - Billing alerts (Session 12)
 
 > Create `scripts/setup_billing_alerts.sh`:
 >
