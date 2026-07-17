@@ -1,13 +1,11 @@
 import sqlite3
 from collections.abc import AsyncGenerator
-from functools import lru_cache
 from typing import Any
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 
-from app.state import ResearchState, TicketState
-from app.ticket_graph import build_graph_with_backends as _build_graph_with_backends
+from app.state import ResearchState
 
 
 def guard_node(state: ResearchState) -> dict:
@@ -56,34 +54,6 @@ def build_graph():
     conn = sqlite3.connect("checkpoints.sqlite", check_same_thread=False)
     saver = SqliteSaver(conn)
     return graph.compile(checkpointer=saver)
-
-
-def _build_ticket_state_graph() -> StateGraph:
-    from app.ticket_graph import _build_ticket_state_graph as build
-
-    return build()
-
-
-def build_ticket_graph(checkpointer=None):
-    """Compile the ticket triage graph. A checkpointer is required for HITL interrupts."""
-    graph = _build_ticket_state_graph()
-    if checkpointer is None:
-        from langgraph.checkpoint.sqlite import SqliteSaver
-
-        conn = sqlite3.connect("ticket_checkpoints.sqlite", check_same_thread=False)
-        checkpointer = SqliteSaver(conn)
-    return graph.compile(checkpointer=checkpointer)
-
-
-def build_graph_with_backends(saver, store=None):
-    """Production entrypoint: compile the ticket triage graph with injected Postgres backends."""
-    return _build_graph_with_backends(saver, store)
-
-
-@lru_cache(maxsize=1)
-def get_ticket_graph():
-    """Shared compiled ticket graph (same checkpointer for ingest / pending / approve)."""
-    return build_ticket_graph(checkpointer=MemorySaver())
 
 
 async def stream_research(question: str, thread_id: str) -> AsyncGenerator[dict[str, Any], None]:

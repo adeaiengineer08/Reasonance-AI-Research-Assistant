@@ -1,5 +1,5 @@
 .PHONY: help install smoke ingest dev eval lint format clean \
-        setup-aws setup-gcp deploy-cloudrun deploy-agentcore deploy-vertex
+        setup-aws setup-gcp deploy-cloudrun
 
 help:  ## Show this help
 	@awk 'BEGIN {FS = ":.*##"; printf "Targets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -36,11 +36,5 @@ setup-aws:  ## Verify AWS CLI + Bedrock gpt-oss access
 setup-gcp:  ## Verify gcloud + Vertex AI access
 	./scripts/setup_gcp.sh
 
-deploy-cloudrun:  ## Deploy Project 1 to Google Cloud Run
+deploy-cloudrun:  ## Deploy Research Assistant to Google Cloud Run
 	./scripts/deploy_cloudrun.sh
-
-deploy-agentcore:  ## Deploy Project 2 to AWS Bedrock AgentCore
-	./scripts/deploy_agentcore.sh
-
-deploy-vertex:  ## Deploy Project 2 to GCP Vertex AI Agent Engine
-	./scripts/deploy_vertex_engine.sh
