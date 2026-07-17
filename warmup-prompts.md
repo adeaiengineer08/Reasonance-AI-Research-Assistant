@@ -18,7 +18,7 @@ These prompts cover Session 1 / Day 1 H4 ("Hello Agent") and all of Session 2 / 
 > 2. Define two `@tool` decorated functions: `get_weather(city: str)` returns the canned string `"It's 28C and sunny in {city}."`, and `search_news(topic: str)` returns the canned string `"Top story on {topic}: AI agents are eating tools."`.
 > 3. Bind both tools to the model with `.bind_tools(...)`.
 > 4. Define an `agent_run(question: str)` function that loops up to 6 iterations: invoke the model on the running messages list, if the response has `tool_calls` then execute each one and append a `ToolMessage`, otherwise return `ai_msg.content`.
-> 5. In `__main__`, call `agent_run("What is the weather in Bangalore today and what's the latest AI news?")` and print the answer.
+> 5. In `__main_`_, call `agent_run("What is the weather in Bangalore today and what's the latest AI news?")` and print the answer.
 >
 > Use type hints. Keep it under 80 lines. Use only `langchain`, `langchain-core`, and stdlib.
 
@@ -38,9 +38,7 @@ These prompts cover Session 1 / Day 1 H4 ("Hello Agent") and all of Session 2 / 
 > Create three files in `app/tools/`:
 >
 > 1. `web_search.py` - export `web_search(query: str, k: int = 5) -> list[dict]`. Use the Tavily Python client (`tavily-python`). Each result dict has keys `title`, `url`, `content`. Get the API key from `TAVILY_API_KEY`. If the key is missing, return one fake `{"title": "mock", "url": "https://example.com", "content": query}` so labs still run.
->
 > 2. `fetch_url.py` - export `fetch_url(url: str) -> str`. Use `httpx` with a 10-second timeout and a browser user-agent. Strip HTML with `BeautifulSoup`. Cap the returned content at 8000 characters. Return a string starting with `"[Source: {url}]\n"`.
->
 > 3. `summarize.py` - export `summarize(text: str, focus: str = "") -> str`. Use `init_chat_model` (model from env var `MONK_MODEL`) to produce a 3-sentence summary. If `focus` is non-empty, the summary must emphasise it.
 >
 > Each function should be wrapped with `@tool` from `langchain_core.tools` and have a docstring written for an LLM reader (clear, single sentence on what it does and when to use it). Use type hints throughout. Add a `__main__` smoke test in each file.
@@ -86,3 +84,4 @@ These prompts cover Session 1 / Day 1 H4 ("Hello Agent") and all of Session 2 / 
 
 - "Add an optional `filter_source: str | None` parameter that prefixes the query with `WHERE source_url LIKE %s`."
 - "Add a max_score threshold and skip rows below it."
+

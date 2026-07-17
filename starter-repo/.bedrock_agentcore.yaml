@@ -1,0 +1,62 @@
+default_agent: monk_ticket_triage
+agents:
+  monk_ticket_triage:
+    name: monk_ticket_triage
+    language: python
+    node_version: '20'
+    entrypoint: /Users/tezbae/Documents/AI Monk /starter-repo/starter-repo/agentcore_entrypoint.py
+    deployment_type: direct_code_deploy
+    runtime_type: PYTHON_3_11
+    platform: linux/arm64
+    container_runtime: null
+    source_path: /Users/tezbae/Documents/AI Monk /starter-repo/starter-repo
+    aws:
+      execution_role: arn:aws:iam::573723531388:role/AmazonBedrockAgentCoreSDKRuntime-us-east-1-ef6ee5cd2c
+      execution_role_auto_create: false
+      account: '573723531388'
+      region: us-east-1
+      ecr_repository: null
+      ecr_auto_create: false
+      s3_path: s3://bedrock-agentcore-codebuild-sources-573723531388-us-east-1
+      s3_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+        network_mode_config: null
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: false
+      lifecycle_configuration:
+        idle_runtime_session_timeout: 600
+        max_lifetime: 28800
+    bedrock_agentcore:
+      agent_id: monk_ticket_triage-3hjmzuEi4c
+      agent_arn: arn:aws:bedrock-agentcore:us-east-1:573723531388:runtime/monk_ticket_triage-3hjmzuEi4c
+      agent_session_id: 26333104-b005-43d5-ade3-012c67671c85
+    codebuild:
+      project_name: null
+      execution_role: null
+      source_bucket: null
+    memory:
+      mode: STM_ONLY
+      memory_id: monk_ticket_triage_mem-WWYiTP3mR4
+      memory_arn: arn:aws:bedrock-agentcore:us-east-1:573723531388:memory/monk_ticket_triage_mem-WWYiTP3mR4
+      memory_name: monk_ticket_triage_mem
+      event_expiry_days: 30
+      first_invoke_memory_check_done: true
+      was_created_by_toolkit: false
+    identity:
+      credential_providers: []
+      workload: null
+    aws_jwt:
+      enabled: false
+      audiences: []
+      signing_algorithm: ES384
+      issuer_url: null
+      duration_seconds: 300
+    authorizer_configuration: null
+    request_header_configuration: null
+    oauth_configuration: null
+    api_key_env_var_name: null
+    api_key_credential_provider_name: null
+    is_generated_by_agentcore_create: false

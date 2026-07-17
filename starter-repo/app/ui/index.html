@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research Assistant — Monk Technologies</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/sse.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <img src="/static/logo.png" alt="Monk Technologies" class="logo">
+        <h1>AI Research Assistant</h1>
+    </header>
+
+    <main>
+        <section class="input-card">
+            <textarea id="question" rows="3" placeholder="Ask a research question…"></textarea>
+            <button id="research-btn" onclick="startResearch()">Research</button>
+        </section>
+
+        <section class="panels">
+            <div class="panel" id="progress-panel">
+                <h2>Progress</h2>
+                <ul id="step-log"></ul>
+            </div>
+            <div class="panel" id="report-panel">
+                <h2>Report</h2>
+                <div id="report-content"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function startResearch() {
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+
+            const btn = document.getElementById('research-btn');
+            btn.disabled = true;
+            btn.textContent = 'Researching…';
+
+            document.getElementById('step-log').innerHTML = '';
+            document.getElementById('report-content').innerHTML = '';
+
+            const res = await fetch('/research', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question})
+            });
+            const {thread_id} = await res.json();
+
+            const evtSource = new EventSource(`/stream/${thread_id}`);
+
+            evtSource.onmessage = function(e) {
+                const event = JSON.parse(e.data);
+
+                if (event.kind === 'end') {
+                    evtSource.close();
+                    btn.disabled = false;
+                    btn.textContent = 'Research';
+                    return;
+                }
+
+                if (event.kind === 'error') {
+                    evtSource.close();
+                    btn.disabled = false;
+                    btn.textContent = 'Research';
+                    document.getElementById('report-content').innerHTML =
+                        `<p style="color:var(--pink)"><strong>Error:</strong> ${event.error}</p>`;
+                    return;
+                }
+
+                // Show step_log entries
+                if (event.event === 'on_chain_end' && event.data?.output?.step_log) {
+                    const log = document.getElementById('step-log');
+                    for (const entry of event.data.output.step_log) {
+                        if (!log.querySelector(`[data-entry="${CSS.escape(entry)}"]`)) {
+                            const li = document.createElement('li');
+                            li.textContent = entry;
+                            li.dataset.entry = entry;
+                            log.appendChild(li);
+                        }
+                    }
+                }
+
+                // Surface graph-level errors to the UI
+                if (event.event === 'on_chain_error') {
+                    const errMsg = event.data?.error?.message || event.data?.error || 'Unknown graph error';
+                    document.getElementById('report-content').innerHTML =
+                        `<p style="color:var(--pink)"><strong>Graph error:</strong> ${errMsg}</p>`;
+                }
+
+                // Show report when writer finishes
+                if (event.event === 'on_chain_end' && event.data?.output?.report) {
+                    document.getElementById('report-content').innerHTML =
+                        marked.parse(event.data.output.report);
+                }
+            };
+
+            evtSource.onerror = function() {
+                evtSource.close();
+                btn.disabled = false;
+                btn.textContent = 'Research';
+            };
+        }
+    </script>
+</body>
+</html>

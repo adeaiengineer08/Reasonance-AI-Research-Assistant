@@ -26,30 +26,27 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 > Initialize a new project `monk-ticket-triage`. Create the following structure with stub implementations:
 >
 > 1. `app/state.py` defining `class TicketState(TypedDict)` with fields:
->    - `ticket_id: str`
->    - `raw: dict` (the incoming ticket: subject, body, sender, attachments)
->    - `domain: Literal["support", "it-helpdesk", "oncall"]`
->    - `classification: dict | None` (will be filled by Triager)
->    - `severity: Literal["P1", "P2", "P3", "P4"] | None`
->    - `findings: list[dict]`
->    - `draft: dict | None`
->    - `approval: Literal["pending", "approved", "edited", "rejected"]`
->    - `sent: bool`
->    - `step_log: list[str]`
->
+>   - `ticket_id: str`
+>   - `raw: dict` (the incoming ticket: subject, body, sender, attachments)
+>   - `domain: Literal["support", "it-helpdesk", "oncall"]`
+>   - `classification: dict | None` (will be filled by Triager)
+>   - `severity: Literal["P1", "P2", "P3", "P4"] | None`
+>   - `findings: list[dict]`
+>   - `draft: dict | None`
+>   - `approval: Literal["pending", "approved", "edited", "rejected"]`
+>   - `sent: bool`
+>   - `step_log: list[str]`
 > 2. `app/agents/supervisor.py` with `supervisor_node(state) -> dict`. Returns `{"next": "triager"|"investigator"|"responder"|"hitl"|"END"}` based on rules:
->    - If `classification is None`: "triager".
->    - Else if `findings == []`: "investigator".
->    - Else if `draft is None`: "responder".
->    - Else if `approval == "pending"`: "hitl".
->    - Else if `approval in ("approved", "edited")` and not `sent`: "send".
->    - Else "END".
->
+>   - If `classification is None`: "triager".
+>   - Else if `findings == []`: "investigator".
+>   - Else if `draft is None`: "responder".
+>   - Else if `approval == "pending"`: "hitl".
+>   - Else if `approval in ("approved", "edited")` and not `sent`: "send".
+>   - Else "END".
 > 3. Stub `app/agents/triager.py`, `app/agents/investigator.py`, `app/agents/responder.py` each as a function that appends a step_log line and returns.
->
 > 4. `app/graph.py` that wires `START -> supervisor` and from supervisor uses `add_conditional_edges` to route to the named node. Each worker returns to supervisor. Use a `SqliteSaver` for now.
 >
-> Add a small `__main__` test that feeds a sample ticket dict and prints each routing step.
+> Add a small `__main_`_ test that feeds a sample ticket dict and prints each routing step.
 
 ---
 
@@ -75,11 +72,8 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 > Create four tool files under `app/tools/`:
 >
 > 1. `query_logs.py` - `query_logs(service: str, since: str = "1h") -> list[dict]`. Reads `data/{state['domain']}/mock_logs.json` keyed by service. Filters by approximate "since" (parse "1h", "30m", etc.). Each entry is `{"timestamp", "level", "message"}`. Wrap with `@tool`.
->
 > 2. `query_metrics.py` - `query_metrics(service: str, metric: str, since: str = "1h") -> dict`. Reads `data/{domain}/mock_metrics.json`. Returns `{"service", "metric", "current", "avg", "p95", "trend"}`.
->
 > 3. `search_runbooks.py` - imports `search_local_docs` from a shared utility module and calls it with `table="runbooks_" + domain.replace("-", "_")` (Postgres identifiers cannot contain `-`, so `it-helpdesk` becomes `it_helpdesk`). Re-exports as `search_runbooks(query: str, k: int = 3)`.
->
 > 4. `get_ticket_history.py` - `get_ticket_history(user_id: str, k: int = 5) -> list[dict]`. Reads `data/{domain}/historical_tickets.jsonl`, filters by user, returns the last k.
 
 **Then the Investigator agent**:
@@ -102,9 +96,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 > Create three files in `app/memory/`:
 >
 > 1. `semantic.py` - wraps a `LangGraphStore` with `recall_user(user_id, k)` and `remember_user(user_id, content)` for per-user facts.
->
 > 2. `episodic.py` - export `similar_past_cases(ticket_text, domain, k=3) -> list[dict]`. Backed by pgvector over a `past_resolutions` table. Each row has `ticket_text`, `resolution_text`, embedding.
->
 > 3. `procedural.py` - export `get_responder_prompt(domain, version="latest") -> str` and `set_responder_prompt(domain, prompt: str)`. Storage is a JSON file `data/prompts/responder_{domain}.json` with a version history. Default prompts ship in the repo.
 
 **Then the Responder**:
@@ -130,6 +122,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 > 3. Return the updated state with a step_log entry.
 >
 > Also create `app/agents/send.py` with `send_node(state) -> dict`:
+>
 > 1. Only runs if `approval in ("approved", "edited")`.
 > 2. Calls the `send_response` tool from `app/tools/send_response.py` (a mock - logs to a file and returns a fake ticket-id).
 > 3. Returns `{"sent": True, "step_log": [...]}`.
@@ -145,6 +138,7 @@ Every Cursor Composer prompt for Project 2, in the order they're issued in class
 > 3. `POST /approve/{thread_id}` with `{action: "approve"|"edit"|"reject", edited_body?: str}`. Calls `graph.invoke(Command(resume=payload), config={"configurable": {"thread_id": thread_id}})` to resume.
 >
 > Also create `app/ui/approval.html` - HTMX page that:
+>
 > - Polls `/pending` every 5 seconds and renders pending drafts as cards.
 > - Each card shows: subject, classification + severity, findings as bullets, the draft body in an editable `<textarea>`, and three buttons (Approve, Save & Approve as Edit, Reject).
 > - On button click, POSTs to `/approve/{thread_id}` and removes the card on success.
@@ -239,11 +233,8 @@ And refactor `app/graph.py` to export `build_graph_with_backends(saver, store)` 
 > Create four eval scripts under `evals/`:
 >
 > 1. `triager_eval.py` - per-row run the Triager alone, compute category exact-match and severity exact-match. Print confusion matrix.
->
 > 2. `investigator_eval.py` - given pre-classified tickets (a separate dataset under `evals/investigator_golden.jsonl` with `ticket`, `classification`, `expected_finding_keywords`), run the Investigator alone. Score: does each finding's claim contain at least one expected keyword? LLM-as-judge for "are these findings sufficient and grounded?".
->
 > 3. `responder_eval.py` - given pre-investigated tickets, run the Responder. Score: (a) escalation precision/recall against ground-truth, (b) LLM-as-judge quality 1-5.
->
 > 4. `e2e_eval.py` - full pipeline run on the golden dataset. Pass = correct category + reasonable response + correct escalation decision (against ground-truth labels).
 >
 > Each script uploads to LangSmith as an experiment with a clear name. Each prints a final pass-rate.
@@ -306,3 +297,4 @@ And refactor `app/graph.py` to export `build_graph_with_backends(saver, store)` 
 **Ops dashboard**:
 
 > Create `app/ops/dashboard.py` - a Streamlit app showing: today's classifications by category (bar chart), severity distribution, escalation rate, average HITL latency, last 20 resolved tickets with status badges.
+

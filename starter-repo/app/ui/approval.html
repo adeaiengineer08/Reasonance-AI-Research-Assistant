@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Approval — Monk Technologies</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        .pending-grid { display: grid; gap: 1.25rem; }
+        .ticket-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .ticket-card h2 { font-size: 1.1rem; margin-bottom: 0.35rem; }
+        .meta { color: #666; font-size: 0.9rem; margin-bottom: 0.75rem; }
+        .meta strong { color: var(--text); }
+        .findings { margin: 0.5rem 0 1rem 1.25rem; font-size: 0.9rem; }
+        .ticket-card textarea {
+            width: 100%;
+            min-height: 140px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+        .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .actions button {
+            padding: 0.55rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-approve { background: #1a7f4b; color: #fff; }
+        .btn-edit { background: linear-gradient(135deg, var(--orange), var(--pink)); color: #fff; }
+        .btn-reject { background: #eee; color: var(--text); }
+        .empty { color: #888; padding: 2rem 0; }
+        .poll-hint { font-size: 0.85rem; color: #888; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/static/logo.png" alt="Monk Technologies" class="logo">
+        <h1>Ticket Approval Queue</h1>
+    </header>
+
+    <main>
+        <p class="poll-hint">Polling <code>/pending</code> every 5 seconds.</p>
+        <div id="pending-list" class="pending-grid"
+             hx-get="/pending"
+             hx-trigger="load, every 5s"
+             hx-swap="none"
+             hx-on::after-request="renderPending(JSON.parse(event.detail.xhr.responseText))">
+            <p class="empty">Loading…</p>
+        </div>
+    </main>
+
+    <script>
+        function escapeHtml(s) {
+            return String(s ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function renderPending(items) {
+            const list = document.getElementById('pending-list');
+            if (!items.length) {
+                list.innerHTML = '<p class="empty">No tickets waiting for approval.</p>';
+                return;
+            }
+            // Preserve in-progress textarea edits across 5s polls.
+            const drafts = {};
+            list.querySelectorAll('textarea[id^="body-"]').forEach(ta => {
+                drafts[ta.id] = ta.value;
+            });
+            const known = new Set(items.map(i => i.thread_id));
+            list.querySelectorAll('.ticket-card').forEach(card => {
+                const tid = card.id.replace(/^card-/, '');
+                if (!known.has(tid)) card.remove();
+            });
+            for (const item of items) {
+                if (!document.getElementById(`card-${item.thread_id}`)) {
+                    list.insertAdjacentHTML('beforeend', renderCard(item));
+                }
+            }
+            list.querySelectorAll('p.empty').forEach(el => el.remove());
+            for (const [id, value] of Object.entries(drafts)) {
+                const ta = document.getElementById(id);
+                if (ta) ta.value = value;
+            }
+        }
+
+        function renderCard(item) {
+            const tid = item.thread_id;
+            const p = item.payload || {};
+            const draft = p.draft || {};
+            const raw = p.raw || {};
+            const cls = p.classification || {};
+            const findings = p.findings || [];
+            const subject = draft.subject || raw.subject || '(no subject)';
+            const bullets = findings.map(f =>
+                `<li>${escapeHtml(f.claim || JSON.stringify(f))}</li>`
+            ).join('') || '<li><em>No findings</em></li>';
+
+            return `
+            <article class="ticket-card" id="card-${escapeHtml(tid)}">
+                <h2>${escapeHtml(subject)}</h2>
+                <p class="meta">
+                    <strong>${escapeHtml(cls.category || 'unclassified')}</strong>
+                    · severity <strong>${escapeHtml(p.severity || '?')}</strong>
+                    · thread <code>${escapeHtml(tid.slice(0, 8))}…</code>
+                </p>
+                <ul class="findings">${bullets}</ul>
+                <label for="body-${escapeHtml(tid)}">Draft body</label>
+                <textarea id="body-${escapeHtml(tid)}">${escapeHtml(draft.body || '')}</textarea>
+                <div class="actions">
+                    <button class="btn-approve" onclick="decide('${tid}', 'approve')">Approve</button>
+                    <button class="btn-edit" onclick="decide('${tid}', 'edit')">Save &amp; Approve as Edit</button>
+                    <button class="btn-reject" onclick="decide('${tid}', 'reject')">Reject</button>
+                </div>
+            </article>`;
+        }
+
+        async function decide(threadId, action) {
+            const body = { action };
+            if (action === 'edit') {
+                const ta = document.getElementById(`body-${threadId}`);
+                body.edited_body = ta ? ta.value : null;
+            }
+            const res = await fetch(`/approve/${threadId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            if (res.ok) {
+                document.getElementById(`card-${threadId}`)?.remove();
+                const list = document.getElementById('pending-list');
+                if (list && !list.querySelector('.ticket-card')) {
+                    list.innerHTML = '<p class="empty">No tickets waiting for approval.</p>';
+                }
+            } else {
+                alert(`Approve failed: ${res.status} ${await res.text()}`);
+            }
+        }
+    </script>
+</body>
+</html>

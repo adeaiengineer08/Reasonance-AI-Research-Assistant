@@ -3,3 +3,13 @@
 {"question": "How do I rotate AWS IAM access keys without downtime?", "expected_sections": ["rotate", "deactivate"], "min_citations": 2}
 {"question": "What are the main differences between Bedrock Knowledge Bases and Vertex AI Search for RAG?", "expected_sections": ["bedrock", "vertex"], "min_citations": 2}
 {"question": "Summarize the last three quarterly revenue results for Apple Inc.", "expected_sections": ["quarter", "revenue"], "min_citations": 3}
+{"question": "What are the SEC disclosure requirements for public companies using AI in financial reporting?", "expected_sections": ["SEC", "disclosure", "AI"], "min_citations": 3}
+{"question": "Explain the GDPR right to erasure and how it conflicts with blockchain immutability.", "expected_sections": ["right to erasure", "blockchain", "compliance"], "min_citations": 3}
+{"question": "How does the Federal Reserve set interest rates and what impact did the most recent decision have on markets?", "expected_sections": ["federal reserve", "interest rate", "market"], "min_citations": 3}
+{"question": "Compare WebAssembly and JavaScript performance for compute-heavy browser applications.", "expected_sections": ["WebAssembly", "JavaScript", "performance"], "min_citations": 2}
+{"question": "What are the legal risks of using open-source LLMs in commercial products?", "expected_sections": ["license", "liability", "intellectual property"], "min_citations": 3}
+{"question": "How do mRNA vaccines work and what distinguishes them from traditional vaccines?", "expected_sections": ["mRNA", "traditional", "immune response"], "min_citations": 2}
+{"question": "What is the current state of quantum computing hardware and which companies lead the field?", "expected_sections": ["qubit", "hardware", "companies"], "min_citations": 3}
+{"question": "Explain the cap-and-trade system for carbon emissions and evaluate its effectiveness in the EU.", "expected_sections": ["cap-and-trade", "EU ETS", "effectiveness"], "min_citations": 2}
+{"question": "What are the key provisions of the EU AI Act and how do they affect foundation model providers?", "expected_sections": ["EU AI Act", "foundation model", "obligations"], "min_citations": 3}
+{"question": "Compare PostgreSQL and DynamoDB for a high-write event-logging workload.", "expected_sections": ["PostgreSQL", "DynamoDB", "write throughput"], "min_citations": 2}

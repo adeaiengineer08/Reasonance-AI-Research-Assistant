@@ -41,11 +41,28 @@ def get_chat_model(name: str | None = None, **kwargs: Any):
 
     If `MONK_MODEL=fake` (the offline-demo default) we return a deterministic
     `FakeMonkChatModel`; otherwise we hand off to `init_chat_model`.
+
+    When `BEDROCK_GUARDRAIL_ID` is set and the resolved model is a Bedrock model,
+    the Bedrock Converse guardrail config is injected automatically.
     """
     resolved = _resolved_chat_name(name)
     if is_fake_chat_model(resolved):
         return fake_chat_model(**kwargs)
-    return init_chat_model(resolved, **kwargs)
+
+    extra_kwargs: dict[str, Any] = dict(kwargs)
+
+    guardrail_id = os.getenv("BEDROCK_GUARDRAIL_ID", "").strip()
+    guardrail_version = os.getenv("BEDROCK_GUARDRAIL_VERSION", "DRAFT").strip()
+    if guardrail_id and resolved.startswith("bedrock"):
+        extra_kwargs["guardrails"] = {
+            "guardrailIdentifier": guardrail_id,
+            "guardrailVersion": guardrail_version,
+            "trace": "enabled",
+        }
+
+    # Google Vertex Model Armor (VERTEX_MODEL_ARMOR_POLICY) is configured on the GCP side; out of scope here.
+
+    return init_chat_model(resolved, **extra_kwargs)
 
 
 @lru_cache(maxsize=4)

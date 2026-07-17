@@ -1,0 +1,197 @@
+:root {
+    --orange: #FF8A47;
+    --pink: #FF2E78;
+    --text: #16161C;
+    --bg: #ffffff;
+    --card-bg: #ffffff;
+    --border: #e8e8e8;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    padding: 0 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+header .logo {
+    height: 40px;
+    width: auto;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+main {
+    padding: 2rem 0;
+}
+
+.input-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.input-card textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-card textarea:focus {
+    border-color: var(--orange);
+}
+
+.input-card button {
+    margin-top: 1rem;
+    padding: 0.65rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+    color: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.input-card button:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.input-card button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.panels {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .panels {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    overflow: auto;
+    max-height: 70vh;
+}
+
+.panel h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--pink);
+}
+
+#step-log {
+    list-style: disc;
+    font-size: 0.85rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    padding-left: 1.25rem;
+}
+
+#step-log li {
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+#step-log li:last-child {
+    border-bottom: none;
+}
+
+#report-content {
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+#report-content h2 {
+    color: var(--text);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#report-content h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
+}
+
+#report-content p {
+    margin-bottom: 0.75rem;
+}
+
+#report-content a {
+    color: var(--orange);
+    text-decoration: none;
+}
+
+#report-content a:hover {
+    text-decoration: underline;
+}
+
+#report-content blockquote {
+    border-left: 3px solid var(--pink);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #555;
+}
+
+#report-content ul,
+#report-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+#report-content li {
+    margin-bottom: 0.3rem;
+}
+
+#report-content code {
+    background: #f5f5f5;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
